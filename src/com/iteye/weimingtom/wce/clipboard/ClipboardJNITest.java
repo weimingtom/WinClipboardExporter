@@ -1,12 +1,10 @@
 package com.iteye.weimingtom.wce.clipboard;
 
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Rectangle;
@@ -24,6 +22,8 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
 public class ClipboardJNITest {
+	private final static String MAGIC = ">>>>WinClipboardExporter<<<<";
+	
 	private final static int SHELL_WIDTH = 400;
 	private final static int SHELL_HEIGHT = 300;
 	
@@ -266,7 +266,9 @@ typedef struct tagCWPSTRUCT {
 				TextTransfer transfer = TextTransfer.getInstance();
 				String data = (String)cb.getContents(transfer);
 				if (data != null && data.length() > 0) {
-					System.out.println(">>>>>>" + data);
+					if (data != null && data.startsWith(MAGIC)) {
+						System.out.println(data.substring(MAGIC.length()));
+					}
 				}
 			}
 			break;
