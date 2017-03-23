@@ -11,6 +11,7 @@ import java.util.List;
 
 import com.iteye.weimingtom.wce.service.ContactService;
 import com.iteye.weimingtom.wce.service.ArticleService;
+import com.iteye.weimingtom.wce.service.EssayService;
 
 public class SqliteDataSourceManager {
 	private static final String DATABASE_FILENAME = "data.db";
@@ -93,6 +94,7 @@ public class SqliteDataSourceManager {
 	private void initDatabase() {
 		ContactService.getInstance().create(con);
 		ArticleService.getInstance().create(con);
+		EssayService.getInstance().create(con);
 		System.out.println("db file version : " + getVersion(con));
         int currentVersion = getVersion(con);
         switch (currentVersion) {

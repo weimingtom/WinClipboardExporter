@@ -21,8 +21,14 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
+import com.iteye.weimingtom.wce.model.EssayInfo;
+import com.iteye.weimingtom.wce.service.EssayService;
+import com.iteye.weimingtom.wce.util.TimeUtil;
+
 public class ClipboardJNITest {
 	private final static String MAGIC = ">>>>WinClipboardExporter<<<<";
+	private final static String MAGIC_URL_START = "href=";
+	private final static String MAGIC_URL_END = ",";
 	
 	private final static int SHELL_WIDTH = 400;
 	private final static int SHELL_HEIGHT = 300;
@@ -267,7 +273,41 @@ typedef struct tagCWPSTRUCT {
 				String data = (String)cb.getContents(transfer);
 				if (data != null && data.length() > 0) {
 					if (data != null && data.startsWith(MAGIC)) {
-						System.out.println(data.substring(MAGIC.length()));
+						String essayContent = data.substring(MAGIC.length());
+						System.out.println(essayContent);
+						
+						if (essayContent != null) {
+							String[] strs = essayContent.split("\\n");
+							String url = null;
+							StringBuffer sb = new StringBuffer();
+							for (int i = 0; i < strs.length; i++) {
+								String line = strs[i].trim();
+								if (i == 0) {
+									if (line.startsWith(MAGIC_URL_START) && line.endsWith(",")) {
+										url = line.substring(MAGIC_URL_START.length(), line.length() - MAGIC_URL_END.length());
+										//System.out.println("url:" + url);
+									}
+								} else {
+									int k = line.length() - 1;
+									for (; k >= 0; k--) {
+										char tail = line.charAt(k);
+										//System.out.println("tail[" + k + "]=" + (int)tail);
+										if ((int)tail != 8203) {
+											break;
+										}
+									}
+									line = line.substring(0, k);
+									sb.append(line).append("\n");
+								}
+							}
+							if (url != null) {
+								EssayInfo info = new EssayInfo();
+								info.setEssayContent(sb.toString());
+								info.setUrl(url);
+								info.setCreateTime(TimeUtil.getTimeString());
+								EssayService.getInstance().insert(info);								
+							}
+						}
 					}
 				}
 			}
