@@ -3,3 +3,7 @@ Using Windows clipboard to export webpage content (for example, weibo), through 
 
 ## Status
 Work in Progress
+
+## Developing Tools  
+* SQLiteQuery  
+http://www.mitec.cz/sqliteq.html  
